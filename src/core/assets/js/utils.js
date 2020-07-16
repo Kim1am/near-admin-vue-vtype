@@ -67,7 +67,34 @@ const loglineObj = {
     Logline.clean()
   }
 }
+const isRegExp = v => {
+  return Object.prototype.toString.call(v) === '[object RegExp]'
+}
+const arrayRemove = (arr, item) => {
+  if (arr.length) {
+    const index = arr.indexOf(item)
+    if (index > -1) {
+      return arr.splice(index, 1)
+    }
+  }
+}
+const isDef = v => {
+  return v !== undefined && v !== null
+}
 
+const isAsyncPlaceholder = node => {
+  return node.isComment && node.asyncFactory
+}
+
+const getFirstComponentChild = children => {
+  if (Array.isArray(children)) {
+    for (const c of children) {
+      if (isDef(c) && (isDef(c.componentOptions) || isAsyncPlaceholder(c))) {
+        return c
+      }
+    }
+  }
+}
 const setPageTitle = title => {
   if (title) {
     window.document.title = title
@@ -419,6 +446,11 @@ const sendReq = async params => {
 }
 export default {
   loglineObj,
+  isRegExp,
+  arrayRemove,
+  isDef,
+  isAsyncPlaceholder,
+  getFirstComponentChild,
   setPageTitle,
   randomCharacter,
   getObjAttrByStr,
