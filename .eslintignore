@@ -1,1 +1,4 @@
 /public/static/js/*.js
+/script/translate.js
+/src/assets/font/iconfont/*.js
+/src/mock

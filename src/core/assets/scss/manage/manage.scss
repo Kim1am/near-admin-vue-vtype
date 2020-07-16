@@ -1,0 +1,32 @@
+@import "../params";
+@import "~@scss/custom/theme/theme";
+
+.n-manage-ctx{
+  height: 100%;
+}
+
+.n-layout-wrp{
+  height: 100%;
+  .n-layout-content{
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    .n-component-page{
+      flex: 1;
+      overflow: auto;
+    }
+  }
+  .n-layout-footer{}
+}
+
+.n-component-page{
+  ::v-deep .ant-spin-nested-loading.n-cp-loading{
+    height: 100%;
+    .ant-spin.ant-spin-spinning{
+      max-height: unset;
+    }
+    .ant-spin-container {
+      height: 100%;
+    }
+  }
+}

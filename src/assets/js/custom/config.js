@@ -1,0 +1,33 @@
+import apiConfig from 'apiConfig'
+import dict from '@custom/dict'
+
+const sysInfo = {
+  name: 'Near-Admin',
+  logo: '/static/images/logo/logo.svg',
+  description: dict.localeObj.sysInfo.sysIntro,
+  appId: apiConfig.appId,
+  appSecret: apiConfig.appSecret,
+  apiHost: apiConfig.apiHost,
+  noNeedCheckRightPath: [
+    'home/HomePage',
+    'setting/Setting',
+    'logline/Logline',
+    'WebView'
+  ]
+}
+
+const buildSwitch = {
+  isMock: true,
+  isHotKey: true,
+  isBreadCrumb: true,
+  isCache: true,
+  isI18n: true
+}
+
+const comConfig = {
+  apiHost: apiConfig.apiHost,
+  sysInfo,
+  buildSwitch
+}
+
+export default comConfig

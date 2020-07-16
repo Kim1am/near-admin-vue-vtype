@@ -1,0 +1,77 @@
+<template>
+  <div class="n-global-locale" v-if="comConfig.buildSwitch.isI18n">
+    <a-dropdown :trigger="['hover']">
+      <a-icon type="global" class="n-locale-icon" />
+      <a-menu slot="overlay" @click="pickLocale" class="n-lang-menu" v-model="currentSelectedKeys">
+        <a-menu-item v-for="(item) in ableLocaleList" :key="item.locale">
+          <a target="_blank" rel="noopener noreferrer">
+            <template v-if="deviceInfo !== 'Windows'">
+              <span class="n-lang-flag">{{ item.flag }}</span>
+            </template>
+            <template v-else>
+              <span class="n-lang-tag">{{ item.locale.toUpperCase() }}</span>
+            </template>
+            {{ ableLocaleMap[item.locale].localeMap[item.locale] }}
+          </a>
+        </a-menu-item>
+      </a-menu>
+    </a-dropdown>
+  </div>
+</template>
+
+<script>
+import { mapGetters, mapActions } from 'vuex'
+import CountryFlag from '@corejs/countryflag'
+import utils from '@corejs/utils'
+import comConfig from '@custom/config'
+
+export default {
+  name: 'NLangPicker',
+  data() {
+    return {
+      currentSelectedKeys: [],
+      deviceInfo: utils.getDeviceInfo('machine'),
+      comConfig
+    }
+  },
+  computed: {
+    ...mapGetters(['locale']),
+    ableLocaleList() {
+      const self = this
+      const newAbleList = []
+      const localeObj = self.$i18n.messages
+      Object.keys(localeObj).forEach(key => {
+        newAbleList.push({
+          flag: `${new CountryFlag().getFlagByChar(localeObj[key].country)}`,
+          locale: key
+        })
+      })
+      return newAbleList
+    },
+    ableLocaleMap() {
+      const self = this
+      return self.$i18n.messages
+    }
+  },
+  methods: {
+    ...mapActions(['changeLocale']),
+    pickLocale(e) {
+      const self = this
+      self.$i18n.locale = e.key
+      self.currentSelectedKeys = [e.key]
+      // cache in localStorge
+      localStorage.setItem('nearAdminLang', e.key)
+      // update vuex state
+      self.changeLocale(e.key)
+    }
+  },
+  created() {
+    const self = this
+    self.currentSelectedKeys = [self.locale]
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+@import '~@corescss/auth/langpicker.scss';
+</style>

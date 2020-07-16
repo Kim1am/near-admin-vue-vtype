@@ -5,6 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "translate": "node script/translate.js",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint"
@@ -47,6 +48,7 @@
     "sass-loader": "^8.0.2",
     "terser-webpack-plugin": "^3.0.6",
     "vue-async-computed": "^3.8.2",
+    "vue-codemirror": "^4.0.6",
     "vue-i18n": "^8.18.2",
     "vue-template-compiler": "^2.6.11",
     "webpack-spritesmith": "^1.1.0"
