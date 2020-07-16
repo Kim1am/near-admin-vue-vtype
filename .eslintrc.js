@@ -34,7 +34,7 @@ module.exports = {
       'error',
       {
         anonymous: 'always',
-        named: 'never',
+        named: 'always',
         asyncArrow: 'always'
       }
     ]

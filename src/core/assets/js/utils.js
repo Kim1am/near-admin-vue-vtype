@@ -6,7 +6,7 @@ import Vue from 'vue'
 const coreLocale = require('@corejs/locale_BASE')
 
 const loglineObj = {
-  setLog({ module, logType, desc, data }) {
+  setLog ({ module, logType, desc, data }) {
     Logline.using(Logline.PROTOCOL.INDEXEDDB)
     if (!module) {
       // 默认是接口请求的错误
@@ -28,7 +28,7 @@ const loglineObj = {
     }
   },
   // get log
-  getLog({ start, end, callback }) {
+  getLog ({ start, end, callback }) {
     // start, end的单位为d，例如：1天-1d，半天-.5d，
     if (start && end) {
       // 获取start-end范围内的日志
@@ -63,7 +63,7 @@ const loglineObj = {
     }
   },
   // clear log
-  cleanLog() {
+  cleanLog () {
     Logline.clean()
   }
 }
@@ -444,6 +444,46 @@ const sendReq = async params => {
     }
   }
 }
+const fullScreenCtl = tp => {
+  const ele = document.documentElement
+  if (tp) {
+    if (ele.requestFullscreen) {
+      ele.requestFullscreen()
+    }
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen()
+    }
+  }
+}
+const getHotKeyStringList = e => {
+  // confirm if combine keyboard
+  const ctrlKey = {
+    isKey: e.ctrlKey,
+    name: 'ctrl'
+  }
+  const altKey = {
+    isKey: e.altKey,
+    name: 'alt'
+  }
+  const shiftKey = {
+    isKey: e.shiftKey,
+    name: 'shift'
+  }
+  const metaKey = {
+    isKey: e.metaKey,
+    name: 'command'
+  }
+  const exKeyList = [ctrlKey, altKey, shiftKey, metaKey]
+  const keyStringList = []
+  exKeyList.forEach(item => {
+    if (item.isKey) {
+      keyStringList.push(item.name)
+    }
+  })
+  keyStringList.push(e.key.toLowerCase())
+  return keyStringList.join('+')
+}
 export default {
   loglineObj,
   isRegExp,
@@ -456,5 +496,7 @@ export default {
   getObjAttrByStr,
   getLocaleIfI18nOff,
   getDeviceInfo,
-  sendReq
+  sendReq,
+  fullScreenCtl,
+  getHotKeyStringList
 }
