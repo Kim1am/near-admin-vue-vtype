@@ -2,17 +2,25 @@ import utils from './utils'
 import { mapGetters, mapActions } from 'vuex'
 import Bus from '@corejs/eventbus'
 import hotKeyConfig from '@custom/hotkeyconfig'
+import dict from '@custom/dict'
 
 export default {
-  created () {
+  created() {
+    // global log tool
     window.Logline = utils.loglineObj
   },
   computed: {
-    ...mapGetters(['locale', 'gloablLocale', 'comConfig', 'isFullScreen'])
+    ...mapGetters([
+      'locale',
+      'gloablLocale',
+      'comConfig',
+      'isFullScreen',
+      'shrinkLeftMenu'
+    ])
   },
   methods: {
-    ...mapActions(['changeFullScreen']),
-    bindHotKeyEvent () {
+    ...mapActions(['changeFullScreen', 'changeShrinkLeftMenu']),
+    bindHotKeyEvent() {
       const self = this
       if (self.comConfig.buildSwitch.isHotKey) {
         window.onkeyup = e => {
@@ -21,17 +29,17 @@ export default {
         }
       }
     },
-    bindResizeEvent () {
+    bindResizeEvent() {
       window.onresize = () => {
         Bus.$emit('windowResize')
       }
     },
-    bindScreenEvent () {
+    bindScreenEvent() {
       document.onfullscreenchange = () => {
         Bus.$emit('windowFullScreen')
       }
     },
-    initBusListener () {
+    initBusListener() {
       const self = this
       // listen key up event
       Bus.$off('windowKeyup').$on('windowKeyup', e => {
@@ -51,13 +59,33 @@ export default {
       Bus.$off('windowFullScreen').$on('windowFullScreen', () => {
         self.changeFullScreen(!self.isFullScreen)
       })
+      // listen window resize
+      Bus.$off('windowResize').$on('windowResize', () => {
+        self.shrinkCtl()
+      })
+    },
+    shrinkCtl() {
+      const self = this
+      const curWidth = window.document.body.clientWidth
+      if (
+        !self.shrinkLeftMenu &&
+        curWidth < dict.commonObj.shrinkThresholdValue
+      ) {
+        self.changeShrinkLeftMenu(true)
+      } else if (
+        self.shrinkLeftMenu &&
+        curWidth >= dict.commonObj.shrinkThresholdValue
+      ) {
+        self.changeShrinkLeftMenu(false)
+      }
     }
   },
-  mounted () {
+  mounted() {
     const self = this
     self.bindHotKeyEvent()
     self.bindResizeEvent()
     self.bindScreenEvent()
+    self.shrinkCtl()
     self.initBusListener()
   }
 }

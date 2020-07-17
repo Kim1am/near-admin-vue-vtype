@@ -4,36 +4,32 @@ import utils from '@corejs/utils'
 
 export default {
   methods: {
-    ...mapActions([
-      'changeMenu',
-      'changeUserInfo'
-      // 'changeRightPathList'
-    ]),
-    getUserMenu () {
+    ...mapActions(['changeMenu', 'changeUserInfo', 'changeRightPathList']),
+    getUserMenu() {
       const self = this
       api.getUserMenu({
-        success (res) {
+        success(res) {
           self.changeMenu(res)
-          // self.setRightPath(res)
+          self.setRightPath(res)
         }
       })
     },
-    getUserInfo () {
+    getUserInfo() {
       const self = this
       api.getUserInfo({
-        success (res) {
+        success(res) {
           self.changeUserInfo(res)
         }
       })
     },
-    setRightPath (menuObj) {
+    setRightPath(menuObj) {
       const self = this
       // to set right path for visitor, not in the right path will show 403 page
       const rightPathList = self.getRootCp(menuObj.menuList)
       const uniqueRightPathSet = new Set(rightPathList)
       self.changeRightPathList([...uniqueRightPathSet])
     },
-    getRootCp (menuList) {
+    getRootCp(menuList) {
       const self = this
       let rightPathList = []
       menuList.forEach(item => {
@@ -49,7 +45,7 @@ export default {
       return rightPathList
     }
   },
-  created () {
+  created() {
     const self = this
     self.getUserMenu()
     self.getUserInfo()

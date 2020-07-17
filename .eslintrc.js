@@ -18,6 +18,7 @@ module.exports = {
         maxBOF: 1 // 文件头最多连续 1 个
       }
     ],
+    'no-case-declarations': 0,
     'no-multi-spaces': 2,
     'no-mixed-spaces-and-tabs': 2,
     quotes: [
@@ -30,14 +31,7 @@ module.exports = {
     ],
     semi: ['error', 'never'],
     'no-console': 1,
-    'space-before-function-paren': [
-      'error',
-      {
-        anonymous: 'always',
-        named: 'always',
-        asyncArrow: 'always'
-      }
-    ]
+    'space-before-function-paren': 0
   },
   overrides: [
     {

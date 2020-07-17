@@ -7,7 +7,7 @@
     <div class="n-header-nav">
       <a-menu mode="horizontal" :selectedKeys="curMenu" @select="changeMenu">
         <a-menu-item :key="index" v-for="(item, index) in menuObj.menuList">
-          <template v-if="typeof item.icon === 'string'">
+          <template v-if="(typeof item.icon) === 'string'">
             <a-icon :type="item.icon" v-if="item.icon" />
           </template>
           <template v-else>
@@ -46,15 +46,15 @@
             <a-menu>
               <a-menu-item key="logline" @click="toLogline">
                 <a-icon type="calendar" />
-                {{ $t(dict.localeObj.personalCenter.frontendLog) }}
+                {{$t(dict.localeObj.personalCenter.frontendLog)}}
               </a-menu-item>
               <a-menu-item key="customsetting">
                 <a-icon type="setting" />
-                {{ $t(dict.localeObj.personalCenter.customSetting) }}
+                {{$t(dict.localeObj.personalCenter.customSetting)}}
               </a-menu-item>
             </a-menu>
           </div>
-          <div class="n-user-menu-logout">{{ $t(dict.localeObj.personalCenter.logout) }}</div>
+          <div class="n-user-menu-logout">{{$t(dict.localeObj.personalCenter.logout)}}</div>
         </div>
       </a-dropdown>
     </div>
@@ -62,12 +62,14 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import { mapGetters, mapActions } from 'vuex'
 import dict from '@custom/dict'
 import utils from '@corejs/utils'
+
 const NLangPicker = () => import('@corecp/NLangPicker.vue')
 
-export default {
+export default Vue.extend({
   name: 'NHeader',
   computed: {
     ...mapGetters([
@@ -87,7 +89,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['changeCurMenu', 'changeFullScreen']),
+    ...mapActions([
+      'changeCurMenu',
+      'changeFullScreen'
+    ]),
     changeMenu ({ key }) {
       const self = this
       self.changeCurMenu([key])
@@ -104,7 +109,7 @@ export default {
       utils.fullScreenCtl(!self.isFullScreen)
     }
   }
-}
+})
 </script>
 
 <style lang="scss" scoped>

@@ -6,7 +6,7 @@ import Vue from 'vue'
 const coreLocale = require('@corejs/locale_BASE')
 
 const loglineObj = {
-  setLog ({ module, logType, desc, data }) {
+  setLog({ module, logType, desc, data }) {
     Logline.using(Logline.PROTOCOL.INDEXEDDB)
     if (!module) {
       // 默认是接口请求的错误
@@ -28,7 +28,7 @@ const loglineObj = {
     }
   },
   // get log
-  getLog ({ start, end, callback }) {
+  getLog({ start, end, callback }) {
     // start, end的单位为d，例如：1天-1d，半天-.5d，
     if (start && end) {
       // 获取start-end范围内的日志
@@ -63,7 +63,7 @@ const loglineObj = {
     }
   },
   // clear log
-  cleanLog () {
+  cleanLog() {
     Logline.clean()
   }
 }
@@ -484,6 +484,204 @@ const getHotKeyStringList = e => {
   keyStringList.push(e.key.toLowerCase())
   return keyStringList.join('+')
 }
+const isUrl = str => {
+  const urlReg = /^((http:\/\/)|(https:\/\/))/g
+  if (urlReg.test(str)) {
+    return true
+  } else {
+    return false
+  }
+}
+
+const isEmpty = val => {
+  if (Array.isArray(val)) {
+    if (val.length > 0) {
+      return false
+    } else {
+      return true
+    }
+  } else {
+    return !(val !== undefined && val !== null && val !== '')
+  }
+}
+
+const handlerMenuSelect = (self, n) => {
+  if (!n || !n[0] || typeof n[0] !== 'string') {
+    // check if have value
+    return false
+  }
+  // check if click by tag, if true, no need to emit change-cp
+  const notFromMenuReg = /@bytag@/g
+  const isNotFromMenu = notFromMenuReg.test(n[0])
+  const cpIndex = n[0].replace('@bytag@', '')
+  const existMenu = getCpMenuByNavIndex(self, cpIndex)
+
+  // check if side menu exist index
+  if (existMenu) {
+    // exist
+    const cpPath = existMenu.path
+    const cpTitle = existMenu.name
+    const menuParams = existMenu.params
+    if (!isNotFromMenu) {
+      self.$emit('change-cp', {
+        component: cpPath,
+        title: cpTitle,
+        navIndex: cpIndex,
+        params: menuParams || null,
+        pk: cpIndex,
+        breadList: getBreadList(self, cpIndex)
+      })
+    }
+  }
+}
+const getCpMenuByNavIndex = (self, navIndex) => {
+  if (navIndex.startsWith('menu')) {
+    const navIndexList = navIndex.split('-sub-')
+    const topMenuIndex = navIndexList[0].split('-')[1]
+    const asideMenuIndexList = navIndexList[1].split('-')
+    const menuObj = self.$store.getters.menuObj
+
+    const topMenuObj = menuObj.menuList[topMenuIndex]
+
+    let temMenuList = topMenuObj.child
+    let targetMenuObj
+    asideMenuIndexList.forEach(item => {
+      const temMenuObj = temMenuList[item]
+      temMenuList = temMenuObj.child || []
+      targetMenuObj = temMenuObj
+    })
+    return targetMenuObj
+  } else {
+    return undefined
+  }
+}
+const getBreadList = (self, navIndex) => {
+  const navIndexList = navIndex.split('-sub-')
+  const topMenuIndex = navIndexList[0].split('-')[1]
+  const asideMenuIndexList = navIndexList[1].split('-')
+  const breadList = []
+  const menuObj = self.$store.getters.menuObj
+
+  const topMenuObj = menuObj.menuList[topMenuIndex]
+  topMenuObj.navIndex = `menu-${topMenuIndex}`
+
+  let temMenuList = topMenuObj.child
+  temMenuList.forEach((item, index) => {
+    item.navIndex = `${topMenuObj.navIndex}-sub-${index}`
+  })
+  breadList.push(topMenuObj)
+  asideMenuIndexList.forEach(item => {
+    const temMenuObj = temMenuList[item]
+    temMenuList = temMenuObj.child || []
+    temMenuList.forEach((sitem, sindex) => {
+      sitem.navIndex = `${temMenuObj.navIndex}-${sindex}`
+    })
+    breadList.push(temMenuObj)
+  })
+  return breadList
+}
+const encodeParams = params => {
+  try {
+    return encodeURIComponent(JSON.stringify(params))
+  } catch (e) {
+    return ''
+  }
+}
+const timestampToDateString = (stamp, gap, isToday, isObj, withoutMinSec) => {
+  if (typeof stamp === 'string') {
+    // for transfer string to timestamp, and fix osx or ios bug
+    stamp = new Date(stamp.replace(/-/g, '/')).getTime()
+  }
+
+  const date = new Date(stamp)
+  const year = date.getFullYear()
+  const month = formatTwice(date.getMonth() + 1)
+  const day = formatTwice(date.getDate())
+  const hour = formatTwice(date.getHours())
+  const minutes = formatTwice(date.getMinutes())
+  const seconds = formatTwice(date.getSeconds())
+
+  if (!isToday) {
+    if (isObj) {
+      return { year, month, day, hour, minutes, seconds }
+    } else {
+      if (withoutMinSec) {
+        return [year, month, day].join(gap)
+      } else {
+        return `${[year, month, day].join(gap)} ${[hour, minutes].join(':')}`
+      }
+    }
+  } else {
+    // 获取今天的时间戳范围
+    const toady = new Date()
+    const toadyStartStamp = new Date(
+      `${[toady.getFullYear(), toady.getMonth() + 1, toady.getDate()].join(
+        '/'
+      )} 00:00:00`
+    ).getTime()
+    const toadyEndStamp = toadyStartStamp + 24 * 60 * 60 * 1000
+
+    if (stamp >= toadyStartStamp && stamp <= toadyEndStamp) {
+      if (withoutMinSec) {
+        return '今天'
+      } else {
+        return `今天 ${[hour, minutes].join(':')}`
+      }
+    } else {
+      if (isObj) {
+        return { year, month, day, hour, minutes, seconds }
+      } else {
+        if (withoutMinSec) {
+          return [year, month, day].join(gap)
+        } else {
+          return `${[year, month, day].join(gap)} ${[hour, minutes].join(':')}`
+        }
+      }
+    }
+  }
+}
+const formatTwice = str => {
+  let temStr = str.toString()
+  temStr = temStr.length === 2 ? temStr : `0${temStr}`
+  return temStr
+}
+
+const exportExcel = (columnList, dataList, fileName) => {
+  let ctx = ''
+  columnList.forEach(item => {
+    ctx = ctx + `<td>${item}</td>`
+  })
+  ctx = `<tr>${ctx}</tr>`
+
+  dataList.forEach(item => {
+    ctx += '<tr>'
+    for (const key of Object.keys(item)) {
+      ctx += `<td>${item[key] + '\t'}</td>`
+    }
+    ctx += '</tr>'
+  })
+
+  const worksheet = fileName
+  const uri = 'data:application/vnd.ms-excel;base64,'
+
+  const tpl = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>${worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>${ctx}</table></body></html>`
+
+  const link = document.createElement('a')
+  link.href = uri + toBase64(tpl)
+  link.download = `download_${timestampToDateString(
+    new Date().getTime(),
+    '-',
+    false,
+    false,
+    true
+  )}_${fileName}.xlsx`
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+const toBase64 = str => {
+  return window.btoa(unescape(encodeURIComponent(str)))
+}
 export default {
   loglineObj,
   isRegExp,
@@ -498,5 +696,15 @@ export default {
   getDeviceInfo,
   sendReq,
   fullScreenCtl,
-  getHotKeyStringList
+  getHotKeyStringList,
+  isUrl,
+  isEmpty,
+  handlerMenuSelect,
+  getCpMenuByNavIndex,
+  getBreadList,
+  encodeParams,
+  exportExcel,
+  toBase64,
+  formatTwice,
+  timestampToDateString
 }

@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import utils from '@corejs/utils'
 
 function getComponentName(opts) {

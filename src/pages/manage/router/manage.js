@@ -32,9 +32,9 @@ try {
   newRoutesList = []
 }
 
-// newRoutesList.forEach(item => {
-//   item.component = () => import(`../view/${item.componentPath}`)
-// })
+newRoutesList.forEach(item => {
+  item.component = () => import('../view/' + item.componentPath)
+})
 
 if (routerOpt && routerOpt.routes) {
   routerOpt.routes = routerOpt.routes.concat(newRoutesList)

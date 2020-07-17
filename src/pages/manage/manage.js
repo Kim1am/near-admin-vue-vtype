@@ -4,10 +4,10 @@ import router from './router/manage'
 import store from '@store/index'
 import i18n from '@corejs/lang'
 import mock from '@mock/index'
-// import plugin from '@corejs/plugin'
+import plugin from '@corejs/plugin'
 import AsyncComputed from 'vue-async-computed'
 import VueCodemirror from 'vue-codemirror'
-// import directives from '@custom/directives'
+import directives from '@custom/directives'
 
 // antd component
 import {
@@ -85,10 +85,9 @@ if (!comConfig.buildSwitch.isI18n) {
 }
 
 // custom directives
-// Object.keys(directives).forEach(item => {
-//   // @ts-ignore
-//   Vue.directive(item, directives[item])
-// })
+Object.keys(directives).forEach(item => {
+  Vue.directive(item, directives[item])
+})
 
 // mockjs
 if (comConfig.buildSwitch.isMock) {
@@ -98,7 +97,7 @@ if (comConfig.buildSwitch.isMock) {
 // async computed
 Vue.use(AsyncComputed)
 // custom plugin
-// Vue.use(plugin)
+Vue.use(plugin)
 
 // codemirror
 Vue.use(VueCodemirror)
