@@ -127,6 +127,7 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import CoreBase from '@corejs/base'
 import Base from '@custom/base'
 import NSearchPanel from '@corecp/NSearchPanel.vue'
@@ -136,7 +137,7 @@ import NCommonTitle from '@corecp/NCommonTitle.vue'
 import dict from '@custom/dict'
 import utils from '@corejs/utils'
 
-export default {
+export default Vue.extend({
   name: 'Logline',
   mixins: [CoreBase, Base],
   components: {
@@ -145,7 +146,7 @@ export default {
     NCodemirror,
     NCommonTitle
   },
-  data () {
+  data() {
     return {
       loglineTable: {
         title: dict.localeObj.logline.list,
@@ -161,8 +162,12 @@ export default {
             },
             customRender: (text, record, index) => {
               const self = this
-              return (self.loglineTable.pagingInfo.current - 1)
-                * self.loglineTable.pagingInfo.pageSize + index + 1
+              return (
+                (self.loglineTable.pagingInfo.current - 1) *
+                  self.loglineTable.pagingInfo.pageSize +
+                index +
+                1
+              )
             }
           },
           {
@@ -265,11 +270,11 @@ export default {
     }
   },
   methods: {
-    exportLog () {
+    exportLog() {
       const self = this
       utils.loglineObj.getLog({
         start: self.loglineForm.model.dateRange,
-        callback: (data) => {
+        callback: data => {
           data = data.reverse()
           const dataList = []
           const columnList = [
@@ -284,70 +289,81 @@ export default {
               idx: index + 1,
               descriptor: item.descriptor,
               level: item.level,
-              time: utils.timestampToDateString(item.time, '-', false, false, false),
+              time: utils.timestampToDateString(
+                item.time,
+                '-',
+                false,
+                false,
+                false
+              ),
               data: JSON.stringify(item.data)
             })
           })
-          utils.exportExcel(columnList, dataList, self.$t(dict.localeObj.logline.detail))
+          utils.exportExcel(
+            columnList,
+            dataList,
+            self.$t(dict.localeObj.logline.detail)
+          )
         }
       })
     },
-    getLog (pageNum = 1) {
+    getLog(pageNum = 1) {
       const self = this
       self.loglineTable.pagingInfo.current = pageNum
       utils.loglineObj.getLog({
         start: self.loglineForm.model.dateRange,
-        callback: (data) => {
+        callback: data => {
           data = data.reverse()
           self.loglineTable.pagingInfo.total = data.length
           self.loglineTable.data = data.splice(
-            (self.loglineTable.pagingInfo.current - 1) * self.loglineTable.pagingInfo.pageSize,
+            (self.loglineTable.pagingInfo.current - 1) *
+              self.loglineTable.pagingInfo.pageSize,
             self.loglineTable.pagingInfo.pageSize
           )
         }
       })
     },
-    pageChange (obj) {
+    pageChange(obj) {
       const self = this
       self.loglineTable.pagingInfo.pageSize = obj.pageSize
       self.getLog(obj.current)
     },
     timestampToDateString: utils.timestampToDateString,
-    showLogDetail (record) {
+    showLogDetail(record) {
       const self = this
       self.loglineDetail.model = record
       self.loglineDetail.props.visible = true
     },
-    formateLogData (data) {
+    formateLogData(data) {
       return JSON.stringify(data, null, 4)
     },
-    resetFiled () {
+    resetFiled() {
       const self = this
       self.$refs['n-form'].resetFields()
       self.getLog()
     },
-    btnEvent (method) {
+    btnEvent(method) {
       const self = this
       if (self[method]) {
         self[method]()
       }
     },
-    removeLog () {
+    removeLog() {
       const self = this
       self.$confirm({
         content: self.$t(dict.localeObj.logline.error.confirm),
-        onOk () {
+        onOk() {
           utils.loglineObj.cleanLog()
           self.$message.success(self.$t(dict.localeObj.logline.success))
           self.getLog()
         },
-        onCancel () {
+        onCancel() {
           self.$message.info(self.$t(dict.localeObj.logline.error.cancel))
         }
       })
     }
   }
-}
+})
 </script>
 
 <style lang="scss" scoped>

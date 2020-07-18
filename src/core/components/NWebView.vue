@@ -3,15 +3,16 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import CoreBase from '@corejs/base'
 
-export default {
+export default Vue.extend({
   name: 'NWebView',
   mixins: [CoreBase],
-  data () {
+  data() {
     return {}
   }
-}
+})
 </script>
 
 <style lang="scss" scoped>

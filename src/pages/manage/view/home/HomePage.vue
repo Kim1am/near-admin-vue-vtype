@@ -3,17 +3,14 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import CoreBase from '@corejs/base'
 import Base from '@custom/base'
 
-export default {
+export default Vue.extend({
   name: 'HomePage',
-  mixins: [CoreBase, Base],
-  mounted () {
-    // eslint-disable-next-line
-    console.log(12313123132)
-  }
-}
+  mixins: [CoreBase, Base]
+})
 </script>
 
 <style lang="scss" scoped>
