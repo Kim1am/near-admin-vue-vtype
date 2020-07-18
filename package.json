@@ -6,6 +6,12 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "translate": "node script/translate.js",
+    "serve:translate": "node script/translate.js && vue-cli-service serve",
+    "uat:build": "BUILD_ENV=uat vue-cli-service build",
+    "prod:build": "BUILD_ENV=prod vue-cli-service build",
+    "analyze:build": "ANALYZE=true vue-cli-service build",
+    "single:build": "node script/singleoperate.js build",
+    "single:serve": "node script/singleoperate.js serve",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint"
