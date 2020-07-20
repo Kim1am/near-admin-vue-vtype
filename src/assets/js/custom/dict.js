@@ -40,7 +40,7 @@ export default {
       sendMsgGap: 10
     },
     copyright: {
-      githubUrl: 'https://github.com/yiptsangkin/near-admin-vue'
+      githubUrl: 'https://github.com/Kim1am/near-admin-vue-vtype.git'
     },
     shrinkThresholdValue: 800,
     tablePagingInfoOpt: {
