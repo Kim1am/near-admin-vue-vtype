@@ -22,6 +22,7 @@ export default {
         }
       })
     },
+    //过滤可访问的链接
     setRightPath(menuObj) {
       const self = this
       // to set right path for visitor, not in the right path will show 403 page
@@ -29,6 +30,7 @@ export default {
       const uniqueRightPathSet = new Set(rightPathList)
       self.changeRightPathList([...uniqueRightPathSet])
     },
+    //把菜单可访问的组件/链接收集起来
     getRootCp(menuList) {
       const self = this
       let rightPathList = []
@@ -47,7 +49,9 @@ export default {
   },
   created() {
     const self = this
+    //获取用户菜单
     self.getUserMenu()
+    //获取用户信息
     self.getUserInfo()
   }
 }

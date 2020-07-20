@@ -173,6 +173,7 @@ export default {
       'changeDefaultIndexs',
       'changeShrinkLeftMenu'
     ]),
+    //点击菜单时触发，从而改变defaultIndexs触发watch
     handlerSelect ({ key }) {
       const self = this
       self.changeDefaultIndexs([key])

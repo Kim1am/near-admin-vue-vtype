@@ -79,8 +79,9 @@ export default {
     async activeComponent () {
       const self = this
       let activeCp
+      //获取当前Tag的信息 
       const curCp = self.curTagList[self.curTagIndex]
-      // check right path
+      // check right path   拼接可不需要权限的链接=可访问链接
       const ableList = self.rightPathList.concat(comConfig.sysInfo.noNeedCheckRightPath)
       if (curCp.component) {
         // is created by directive
@@ -106,6 +107,7 @@ export default {
               component: cpAsync
             })
           } catch (e) {
+            //重定向至403
             NoFound.staticKey = curCp.pk
             activeCp = NoFound
             self.$message.error(`${self.$t(dict.localeObj.menuObj.errorTip.notfoundTip)} <<${curCp.component}>>`)
@@ -136,6 +138,7 @@ export default {
     ]),
     changeCp (cpInfo, byMenu = true) {
       const self = this
+      //组装params
       cpInfo = self.formateCpParams(cpInfo)
       // if empty component, return false
       if (!cpInfo.component) {

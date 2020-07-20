@@ -6,6 +6,7 @@ import Vue from 'vue'
 
 const CACHE_LOCALE = localStorage.getItem('nearAdminLang') || 'zh-cn'
 const RDN_KEY = utils.randomCharacter(6)
+//用于初始化后默认首页
 const defaultTagList = [
   {
     component: 'home/HomePage',

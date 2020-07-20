@@ -515,7 +515,6 @@ const handlerMenuSelect = (self, n) => {
   const isNotFromMenu = notFromMenuReg.test(n[0])
   const cpIndex = n[0].replace('@bytag@', '')
   const existMenu = getCpMenuByNavIndex(self, cpIndex)
-
   // check if side menu exist index
   if (existMenu) {
     // exist
@@ -524,27 +523,28 @@ const handlerMenuSelect = (self, n) => {
     const menuParams = existMenu.params
     if (!isNotFromMenu) {
       self.$emit('change-cp', {
-        component: cpPath,
-        title: cpTitle,
-        navIndex: cpIndex,
+        component: cpPath, //组件对应路劲
+        title: cpTitle, //菜单名
+        navIndex: cpIndex, //菜单路径路径，ex：menu-0-sub-1-0-0
         params: menuParams || null,
         pk: cpIndex,
-        breadList: getBreadList(self, cpIndex)
+        breadList: getBreadList(self, cpIndex) //组装“面包屑”
       })
     }
   }
 }
 const getCpMenuByNavIndex = (self, navIndex) => {
   if (navIndex.startsWith('menu')) {
-    const navIndexList = navIndex.split('-sub-')
-    const topMenuIndex = navIndexList[0].split('-')[1]
-    const asideMenuIndexList = navIndexList[1].split('-')
+    const [navIndexListFather, navIndexListSon] = navIndex.split('-sub-')
+    const [, topMenuIndex] = navIndexListFather.split('-')
+    const asideMenuIndexList = navIndexListSon.split('-')
     const menuObj = self.$store.getters.menuObj
-
+    //获取首级菜单数组
     const topMenuObj = menuObj.menuList[topMenuIndex]
-
+    //获取子菜单
     let temMenuList = topMenuObj.child
     let targetMenuObj
+    //根据子菜单数组，逐层查找,直至找到对应菜单对象
     asideMenuIndexList.forEach(item => {
       const temMenuObj = temMenuList[item]
       temMenuList = temMenuObj.child || []
@@ -555,10 +555,12 @@ const getCpMenuByNavIndex = (self, navIndex) => {
     return undefined
   }
 }
+//组装面包屑
 const getBreadList = (self, navIndex) => {
-  const navIndexList = navIndex.split('-sub-')
-  const topMenuIndex = navIndexList[0].split('-')[1]
-  const asideMenuIndexList = navIndexList[1].split('-')
+  //ex：menu-0-sub-1-0-0
+  const [navIndexListFather, navIndexListSon] = navIndex.split('-sub-')
+  const [, topMenuIndex] = navIndexListFather.split('-')
+  const asideMenuIndexList = navIndexListSon.split('-')
   const breadList = []
   const menuObj = self.$store.getters.menuObj
 
@@ -573,6 +575,7 @@ const getBreadList = (self, navIndex) => {
   asideMenuIndexList.forEach(item => {
     const temMenuObj = temMenuList[item]
     temMenuList = temMenuObj.child || []
+    //WARNING:this loop for the object which is  the max deep level 3
     temMenuList.forEach((sitem, sindex) => {
       sitem.navIndex = `${temMenuObj.navIndex}-${sindex}`
     })
