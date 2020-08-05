@@ -62,14 +62,13 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import { mapGetters, mapActions } from 'vuex'
 import dict from '@custom/dict'
 import utils from '@corejs/utils'
 
 const NLangPicker = () => import('@corecp/NLangPicker.vue')
 
-export default Vue.extend({
+export default {
   name: 'NHeader',
   computed: {
     ...mapGetters([
@@ -109,7 +108,7 @@ export default Vue.extend({
       utils.fullScreenCtl(!self.isFullScreen)
     }
   }
-})
+}
 </script>
 
 <style lang="scss" scoped>
