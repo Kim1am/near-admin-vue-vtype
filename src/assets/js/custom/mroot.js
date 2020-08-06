@@ -1,6 +1,5 @@
 import api from '@api/manage/apiMethod'
 import { mapActions } from 'vuex'
-import utils from '@corejs/utils'
 
 export default {
   methods: {
@@ -29,22 +28,6 @@ export default {
       const rightPathList = self.getRootCp(menuObj.menuList)
       const uniqueRightPathSet = new Set(rightPathList)
       self.changeRightPathList([...uniqueRightPathSet])
-    },
-    //把菜单可访问的组件/链接收集起来
-    getRootCp(menuList) {
-      const self = this
-      let rightPathList = []
-      menuList.forEach(item => {
-        if (utils.isEmpty(item.child) && !utils.isEmpty(item.path)) {
-          if (utils.isUrl(item.path)) {
-            rightPathList.push(item.path)
-          }
-          rightPathList.push(item.path)
-        } else if (!utils.isEmpty(item.child) && utils.isEmpty(item.path)) {
-          rightPathList = rightPathList.concat(self.getRootCp(item.child))
-        }
-      })
-      return rightPathList
     }
   },
   created() {

@@ -43,12 +43,12 @@
             </div>
           </div>
           <div class="n-user-menu-func">
-            <a-menu>
+            <a-menu :selectedKeys="[]">
               <a-menu-item key="logline" @click="toLogline">
                 <a-icon type="calendar" />
                 {{$t(dict.localeObj.personalCenter.frontendLog)}}
               </a-menu-item>
-              <a-menu-item key="customsetting">
+              <a-menu-item key="customsetting" @click="toSetting">
                 <a-icon type="setting" />
                 {{$t(dict.localeObj.personalCenter.customSetting)}}
               </a-menu-item>
@@ -101,6 +101,13 @@ export default {
       self.$newpage({
         title: dict.localeObj.personalCenter.frontendLog,
         component: dict.commonObj.loglinePath
+      })
+    },
+    toSetting () {
+      const self = this
+      self.$newpage({
+        title: dict.localeObj.personalCenter.customSetting,
+        component: dict.commonObj.settingPath
       })
     },
     setFullScreen () {

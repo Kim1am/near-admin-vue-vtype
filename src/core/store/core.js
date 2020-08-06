@@ -21,6 +21,9 @@ const defaultTagList = [
 
 let cacheTagList
 let cacheTagIndex
+const cacheEntryList = JSON.parse(
+  localStorage.getItem('nearAdminCustomerEntry') || '[]'
+)
 
 if (comConfig.buildSwitch.isCache) {
   cacheTagList = JSON.parse(
@@ -28,7 +31,7 @@ if (comConfig.buildSwitch.isCache) {
   )
   cacheTagIndex = JSON.parse(localStorage.getItem('nearAdminTagIndex') || '0')
 } else {
-  cacheTagList = []
+  cacheTagList = defaultTagList
   cacheTagIndex = 0
 }
 
@@ -135,7 +138,8 @@ const state = {
   shrinkLeftMenu: false,
   saveWarning: false,
   isFullScreen: false,
-  isCpLoading: true
+  isCpLoading: true,
+  cacheEntry: []
 }
 
 const getters = {
@@ -180,6 +184,9 @@ const getters = {
   },
   isCpLoading: getterSate => {
     return getterSate.isCpLoading
+  },
+  cacheEntry: getterSate => {
+    return getterSate.cacheEntry
   }
 }
 
@@ -189,6 +196,13 @@ const mutations = {
   },
   changeMenu: (mutationState, menuObj) => {
     mutationState.menuObj = menuObj
+    // get cache customer entry
+    mutationState.cacheEntry = utils.getMenuRootCp(
+      menuObj.menuList,
+      true,
+      undefined,
+      cacheEntryList
+    )
   },
   changeCurMenu: (mutationState, curMenu) => {
     mutationState.curMenu = curMenu
@@ -303,6 +317,9 @@ const mutations = {
   },
   changeCpLoading: (mutationState, isCpLoading) => {
     mutationState.isCpLoading = isCpLoading
+  },
+  changeCacheEntry: (mutationState, cacheEntry) => {
+    mutationState.cacheEntry = cacheEntry
   }
 }
 
@@ -356,6 +373,9 @@ const actions = {
   },
   changeCpLoading: (context, isCpLoading) => {
     context.commit('changeCpLoading', isCpLoading)
+  },
+  changeCacheEntry: (context, cacheEntry) => {
+    context.commit('changeCacheEntry', cacheEntry)
   }
 }
 

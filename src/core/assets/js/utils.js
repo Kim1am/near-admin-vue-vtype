@@ -558,9 +558,9 @@ const getCpMenuByNavIndex = (self, navIndex) => {
 //组装面包屑
 const getBreadList = (self, navIndex) => {
   //ex：menu-0-sub-1-0-0
-  const [navIndexListFather, navIndexListSon] = navIndex.split('-sub-')
-  const [, topMenuIndex] = navIndexListFather.split('-')
-  const asideMenuIndexList = navIndexListSon.split('-')
+  const [topMenu, asideMenu] = navIndex.split('-sub-')
+  const [, topMenuIndex] = topMenu.split('-')
+  const asideMenuIndexList = asideMenu.split('-')
   const breadList = []
   const menuObj = self.$store.getters.menuObj
 
@@ -685,6 +685,43 @@ const exportExcel = (columnList, dataList, fileName) => {
 const toBase64 = str => {
   return window.btoa(unescape(encodeURIComponent(str)))
 }
+const getMenuRootCp = (
+  menuList,
+  isObj,
+  replaceField = { title: 'name' },
+  targetMenu
+) => {
+  let rightPathList = []
+  menuList.forEach((item, index) => {
+    if (isEmpty(item.child) && !isEmpty(item.path)) {
+      if (isObj) {
+        const key = `Customer-Entry-${index}-${item[replaceField.title]}`
+        if (targetMenu) {
+          if (targetMenu.indexOf(key) !== -1) {
+            rightPathList.push({
+              key,
+              path: item.path,
+              title: item[replaceField.title]
+            })
+          }
+        } else {
+          rightPathList.push({
+            key,
+            path: item.path,
+            title: item[replaceField.title]
+          })
+        }
+      } else {
+        rightPathList.push(item.path)
+      }
+    } else if (!isEmpty(item.child) && isEmpty(item.path)) {
+      rightPathList = rightPathList.concat(
+        getMenuRootCp(item.child, isObj, replaceField, targetMenu)
+      )
+    }
+  })
+  return rightPathList
+}
 export default {
   loglineObj,
   isRegExp,
@@ -709,5 +746,6 @@ export default {
   exportExcel,
   toBase64,
   formatTwice,
-  timestampToDateString
+  timestampToDateString,
+  getMenuRootCp
 }

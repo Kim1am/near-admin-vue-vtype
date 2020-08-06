@@ -15,9 +15,11 @@
 <script>
 import dict from '@custom/dict'
 import { mapGetters } from 'vuex'
+import CoreBase from '@corejs/base'
 
 export default {
   name: 'NNoRight',
+  mixins: [CoreBase],
   data () {
     return {
       iconUrl: '/static/images/manage/403.png',

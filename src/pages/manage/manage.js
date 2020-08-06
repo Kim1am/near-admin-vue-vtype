@@ -29,7 +29,9 @@ import {
   Table,
   Divider,
   Tooltip,
-  Checkbox
+  Checkbox,
+  Transfer,
+  Switch
 } from 'ant-design-vue'
 import comConfig from '@custom/config'
 import utils from '@corejs/utils'
@@ -69,6 +71,8 @@ Vue.component(Tooltip.name, Tooltip)
 Vue.component(Checkbox.name, Checkbox)
 Vue.component(Checkbox.Group.name, Checkbox.Group)
 Vue.component(Modal.name, Modal)
+Vue.component(Transfer.name, Transfer)
+Vue.component(Switch.name, Switch)
 
 // here to fix https://github.com/vueComponent/ant-design-vue/issues/2261# this issue
 Vue.use(Modal)

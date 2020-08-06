@@ -184,30 +184,18 @@ export default {
     },
     cpExistIndex (cpInfo) {
       const self = this
-      let needCacheSame = false
       for (let i = 0; i < self.curTagList.length; i++) {
         const item = self.curTagList[i]
-        if (item.component === cpInfo.component) {
-          if (item.pk === cpInfo.pk) {
-            return {
-              idx: i,
-              pk: item.pk
-            }
-          } else {
-            needCacheSame = true
+        if (item.component === cpInfo.component && item.pk === cpInfo.pk) {
+          return {
+            idx: i,
+            pk: item.pk
           }
         }
       }
-      if (needCacheSame) {
-        return {
-          idx: -1,
-          pk: cpInfo.pk || utils.randomCharacter(6)
-        }
-      } else {
-        return {
-          idx: -1,
-          pk: cpInfo.pk || utils.randomCharacter(6)
-        }
+      return {
+        idx: -1,
+        pk: cpInfo.pk || utils.randomCharacter(6)
       }
     },
     formateCpParams (cpInfo) {
