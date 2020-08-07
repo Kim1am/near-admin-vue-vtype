@@ -85,7 +85,7 @@ try {
       let cmd
       if (operator === 'build') {
         envres.targetEnv = envres.targetEnv || 'prod'
-        cmd = `ENTRYS=${entryres.targetEntry
+        cmd = `npx cross-env ENTRYS=${entryres.targetEntry
           .map(e => {
             return e
           })
@@ -93,7 +93,7 @@ try {
           clean.targetClean
         }`
       } else {
-        cmd = `ENTRYS=${entryres.targetEntry
+        cmd = `npx cross-env ENTRYS=${entryres.targetEntry
           .map(e => {
             return e
           })
