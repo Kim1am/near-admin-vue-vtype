@@ -44,28 +44,29 @@ const withBaseFile = function(str) {
   return ['locale_BASE.js', 'locale_MAP.js'].indexOf(str) === -1
 }
 
-const curPath = process.cwd().replace('/script', '')
-const corePath = `${curPath}/src/core/assets/js`
-const basePath = `${curPath}/src/assets/js/locale`
-const coreBasePath = `${corePath}/locale_BASE.js`
-const translateBasePath = `${basePath}/locale_BASE.js`
-const optPath = `${basePath}/locale_MAP.js`
+const curPath = process.cwd().replace('/script', '') //当前路径
+const corePath = `${curPath}/src/core/assets/js` //核心JS文件夹，用于获取项目核心中文对照
+const basePath = `${curPath}/src/assets/js/locale` //资源文件，
+const coreBasePath = `${corePath}/locale_BASE.js` //项目核心中文对照文件
+const translateBasePath = `${basePath}/locale_BASE.js` //项目客制中文对照
+const optPath = `${basePath}/locale_MAP.js` //国家代码对照
 
 try {
   // remove all locale file (without locale_BASE.js and locale_MAP.js)
   const deleteFileList = fs.readdirSync(basePath)
+  let localeConfig
   deleteFileList.forEach(function(item) {
+    //删除除'locale_BASE.js', 'locale_MAP.js'以外的文件
     if (withBaseFile(item)) {
       fs.unlinkSync(`${basePath}/${item}`)
     }
   })
-  const optObj = fs.statSync(optPath)
-  const isFile = optObj.isFile()
-  let localeConfig
+  const isFile = fs.statSync(optPath).isFile()
   let choices = []
   if (isFile) {
     localeConfig = require(optPath)
     for (let key in localeConfig) {
+      //查询国家代码是否支持谷歌机翻，支持则加入到交互选择里
       if (ableLang.indexOf(localeConfig[key].locale) !== -1) {
         choices.push({
           title: key,
@@ -94,11 +95,13 @@ try {
           `Warning: No target file selected. Default locale 'zh-cn, zh-tw, en, ja, ko'`
         )
       )
+      //默认翻译语言
       response.targetLang = ['zh_CN', 'zh_TW', 'en_US', 'ja_JP', 'ko_KR']
     }
     // base locale file
     let baseFile = require(translateBasePath)
     const coreBaseFile = require(coreBasePath)
+    //中文对照合并
     baseFile = {
       ...baseFile,
       ...coreBaseFile
@@ -111,10 +114,11 @@ try {
       spinner.start()
       let localeCode = localeConfig[item].locale
       let targetFile = JSON.parse(JSON.stringify(baseFile))
+      //收集需要翻译的所有中文----对象扁平
       const srcResult = await getTranslate({
         obj: targetFile
       })
-      // translate all string
+      // translate all string  开始翻译
       const finalResult = await translate(srcResult, {
         tld: 'cn',
         from: baseFile.locale || 'auto',
@@ -127,7 +131,9 @@ try {
       targetFile.locale = localeCode
       targetFile.country = item.split('_')[1]
       let resultText = JSON.stringify(targetFile, null, 4)
+      //获取对照表所有key  ‘"xxx.(可选)yyy":’
       const keyList = resultText.match(/".*?":/g)
+      //过滤有横杠key ,因为以免object里面出现xx-yy为Key
       keyList.forEach(function(citem) {
         if (!/-/.test(citem)) {
           resultText = resultText.replace(citem, citem.replace(/"/g, ''))
@@ -141,7 +147,7 @@ try {
       // save locale file
       let finalText = `export default ${resultText}\n`
       try {
-        fs.writeFileSync(`${basePath}/${item}.js`, finalText)
+        fs.writeFileSync(`${basePath}/${item}.js`, finalText) //写翻译后的文件
         spinner.succeed(`${item} completed`)
       } catch (e) {
         console.log(e)
@@ -154,6 +160,7 @@ try {
     let customLocale = []
     let antdOpt = []
     let customOpt = []
+    //组织import 语句，导入antd语言包
     currentLocaleList.forEach(function(citem) {
       if (withBaseFile(citem)) {
         let defaultName = citem.split('.')[0]
@@ -169,7 +176,7 @@ try {
         customOpt.push(`[${antdName}.locale]: ${customerName}`)
       }
     })
-    // read lang.tpl
+    // read lang.tpl  读取模板文件
     let tplFileCtx = fs.readFileSync(
       `${curPath}/script/tpl/lang/lang.tpl`,
       'utf-8'

@@ -3,7 +3,7 @@ const glob = require('glob')
 const buildConfig = require('./config')
 // build tool set
 module.exports = {
-  getMultiFiles: function (globPath) {
+  getMultiFiles: function(globPath) {
     // get multi pages's entry and template
     let entries = {}
     let finalEntries = []
@@ -11,13 +11,13 @@ module.exports = {
       ? process.env.ENTRYS.split(',')
       : []
     if (entriesListByCmd.length > 0) {
-      entriesListByCmd.forEach(function (item) {
+      entriesListByCmd.forEach(function(item) {
         finalEntries.push(`./src/pages/${item}/page.config.json`)
       })
     } else {
       finalEntries = glob.sync(globPath)
     }
-    finalEntries.forEach(function (entry) {
+    finalEntries.forEach(function(entry) {
       const pathList = entry.split('/')
       const baseConfig = require(`.${entry}`)
       pathList.splice(-1)
@@ -55,7 +55,7 @@ module.exports = {
     })
     return entries
   },
-  getMultiEntries: function () {
+  getMultiEntries: function() {
     let self = this
     const pages = self.getMultiFiles(
       `./src/${buildConfig.moduleName}/**/page.config.json`
@@ -63,7 +63,7 @@ module.exports = {
     const chunks = Object.keys(pages)
     let chunksPlugin = {}
     let devRewriteUrl = []
-    chunks.forEach(function (item) {
+    chunks.forEach(function(item) {
       devRewriteUrl.push({
         from: new RegExp(`^/(${item}|${item}.html)/?.*`),
         to: `/${item}.html`
