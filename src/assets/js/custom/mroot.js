@@ -1,5 +1,6 @@
 import api from '@api/manage/apiMethod'
 import { mapActions } from 'vuex'
+import utils from '@corejs/utils'
 
 export default {
   methods: {
@@ -25,7 +26,7 @@ export default {
     setRightPath(menuObj) {
       const self = this
       // to set right path for visitor, not in the right path will show 403 page
-      const rightPathList = self.getRootCp(menuObj.menuList)
+      const rightPathList = utils.getMenuRootCp(menuObj.menuList)
       const uniqueRightPathSet = new Set(rightPathList)
       self.changeRightPathList([...uniqueRightPathSet])
     }
