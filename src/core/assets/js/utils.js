@@ -230,217 +230,111 @@ const getDeviceInfo = qt => {
 }
 const sendReq = async params => {
   // check url
-  if (!params.url) {
+  const {
+    headers: pHeaders = {},
+    url: pUrl,
+    timeout: pTimeout = 20000,
+    method: pMethod = 'POST',
+    responseType: pResponseType = 'json',
+    data: pData,
+    success: pSuccess,
+    fail: pFail,
+    error: pError
+  } = params
+  if (!pUrl) {
     Vue.prototype.$message.error(
       Vue.prototype.$t(dict.localeObj.requestInfo.withoutUrl)
     )
     return false
   }
-  // set default value
-  params.headers = params.headers || {}
-  params.headers['Content-Type'] =
-    params.headers['Content-Type'] || 'application/json'
-  params.timeout = params.timeout || 20000
-  params.method = params.method || 'POST'
-  params.responseType = params.responseType || 'json'
+  // set Content-Type default value
+  pHeaders['Content-Type'] = pHeaders['Content-Type'] || 'application/json'
   const rCfg = {
-    headers: params.headers,
-    responseType: params.responseType,
-    timeout: params.timeout
+    pHeaders,
+    pResponseType,
+    pTimeout
   }
-  if (params.method === 'POST') {
+  if (pMethod === 'POST') {
     try {
-      const result = await axios.post(params.url, params.data, rCfg)
-      const resData = result.data
-      const resCode = resData.code
-      const mainData = resData.data
+      const {
+        data: resData,
+        data: { code: resCode, data: mainData }
+      } = await axios.post(pUrl, pData, rCfg)
       if (resCode === 0) {
-        if (params.success) {
-          params.success(mainData)
+        if (pSuccess) {
+          pSuccess(mainData)
         } else {
           // eslint-disable-next-line
           console.log('request successful')
         }
       } else {
-        loglineObj.setLog({
-          logType: 'error',
-          desc: 'api fail',
-          data: {
-            message: resData.message,
-            params,
-            response: resData
-          }
-        })
-        if (params.fail) {
-          params.fail(resData)
-        } else {
-          // eslint-disable-next-line
-          console.log('request fail')
-        }
+        resQuestFail(resData, params, pFail)
       }
       return resData
     } catch (e) {
-      loglineObj.setLog({
-        logType: 'error',
-        desc: 'api fail',
-        data: {
-          message: e,
-          params
-        }
-      })
-      if (params.error) {
-        params.error(e)
-      } else {
-        // eslint-disable-next-line
-        console.log('request error')
-      }
-      return e
+      return catchError(e, params, pError)
     }
-  } else if (params.method === 'GET') {
+  } else if (pMethod === 'GET') {
     try {
-      const getParams = Object.assign({ params: params.data }, rCfg)
-      const result = await axios.get(params.url, getParams)
-      const resData = result.data
-      const resCode = resData.code
-      const mainData = resData.data
+      const getParams = Object.assign({ params: pData }, rCfg)
+      const {
+        data: resData,
+        data: { code: resCode, data: mainData }
+      } = await axios.get(pUrl, getParams)
       if (resCode === 0) {
-        if (params.success) {
-          params.success(mainData)
+        if (pSuccess) {
+          pSuccess(mainData)
         } else {
           // eslint-disable-next-line
           console.log('request successful')
         }
       } else {
-        loglineObj.setLog({
-          logType: 'error',
-          desc: 'api fail',
-          data: {
-            message: resData.message,
-            params,
-            response: resData
-          }
-        })
-        if (params.fail) {
-          params.fail(resData)
-        } else {
-          // eslint-disable-next-line
-          console.log('request fail')
-        }
+        resQuestFail(resData, params, pFail)
       }
       return resData
     } catch (e) {
-      loglineObj.setLog({
-        logType: 'error',
-        desc: 'api fail',
-        data: {
-          message: e,
-          params
-        }
-      })
-      if (params.error) {
-        params.error(e)
-      } else {
-        // eslint-disable-next-line
-        console.log('request error')
-      }
-      return e
+      return catchError(e, params, pError)
     }
-  } else if (params.method === 'PUT') {
+  } else if (pMethod === 'PUT') {
     try {
-      const result = await axios.put(params.url, params.data, rCfg)
-      const resData = result.data
-      const resCode = resData.code
-      const mainData = resData.data
+      const {
+        data: resData,
+        data: { code: resCode, data: mainData }
+      } = await axios.put(pUrl, pData, rCfg)
       if (resCode === 0) {
-        if (params.success) {
-          params.success(mainData)
+        if (pSuccess) {
+          pSuccess(mainData)
         } else {
           // eslint-disable-next-line
           console.log('request successful')
         }
       } else {
-        loglineObj.setLog({
-          logType: 'error',
-          desc: 'api fail',
-          data: {
-            message: resData.message,
-            params,
-            response: resData
-          }
-        })
-        if (params.fail) {
-          params.fail(resData)
-        } else {
-          // eslint-disable-next-line
-          console.log('request fail')
-        }
+        resQuestFail(resData, params, pFail)
       }
       return resData
     } catch (e) {
-      loglineObj.setLog({
-        logType: 'error',
-        desc: 'api fail',
-        data: {
-          message: e,
-          params
-        }
-      })
-      if (params.error) {
-        params.error(e)
-      } else {
-        // eslint-disable-next-line
-        console.log('request error')
-      }
-      return e
+      return catchError(e, params, pError)
     }
-  } else if (params.method === 'DELETE') {
+  } else if (pMethod === 'DELETE') {
     try {
-      const getParams = Object.assign({ params: params.data }, rCfg)
-      const result = await axios.delete(params.url, getParams)
-      const resData = result.data
-      const resCode = resData.code
-      const mainData = resData.data
+      const getParams = Object.assign({ params: pData }, rCfg)
+      const {
+        data: resData,
+        data: { code: resCode, data: mainData }
+      } = await axios.delete(pUrl, getParams)
       if (resCode === 0) {
-        if (params.success) {
-          params.success(mainData)
+        if (pSuccess) {
+          pSuccess(mainData)
         } else {
           // eslint-disable-next-line
           console.log('request successful')
         }
       } else {
-        loglineObj.setLog({
-          logType: 'error',
-          desc: 'api fail',
-          data: {
-            message: resData.message,
-            params,
-            response: resData
-          }
-        })
-        if (params.fail) {
-          params.fail(resData)
-        } else {
-          // eslint-disable-next-line
-          console.log('request fail')
-        }
+        resQuestFail(resData, params, pFail)
       }
       return resData
     } catch (e) {
-      loglineObj.setLog({
-        logType: 'error',
-        desc: 'api fail',
-        data: {
-          message: e,
-          params
-        }
-      })
-      if (params.error) {
-        params.error(e)
-      } else {
-        // eslint-disable-next-line
-        console.log('request error')
-      }
-      return e
+      return catchError(e, params, pError)
     }
   }
 }
@@ -722,6 +616,43 @@ const getMenuRootCp = (
   })
   return rightPathList
 }
+
+const catchError = (e, params, pError) => {
+  loglineObj.setLog({
+    logType: 'error',
+    desc: 'api fail',
+    data: {
+      message: e,
+      params
+    }
+  })
+  if (pError) {
+    pError(e)
+  } else {
+    // eslint-disable-next-line
+    console.log('request error')
+  }
+  return e
+}
+
+const resQuestFail = (resData, params, pFail) => {
+  loglineObj.setLog({
+    logType: 'error',
+    desc: 'api fail',
+    data: {
+      message: resData.message,
+      params,
+      response: resData
+    }
+  })
+  if (pFail) {
+    pFail(resData)
+  } else {
+    // eslint-disable-next-line
+    console.log('request fail')
+  }
+}
+
 export default {
   loglineObj,
   isRegExp,
