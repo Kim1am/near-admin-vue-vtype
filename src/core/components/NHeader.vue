@@ -52,6 +52,10 @@
                 <a-icon type="setting" />
                 {{$t(dict.localeObj.personalCenter.customSetting)}}
               </a-menu-item>
+              <a-menu-item key="customclean" @click="toClean">
+                <a-icon type="delete" />
+                {{$t(dict.localeObj.personalCenter.customClean)}}
+              </a-menu-item>
             </a-menu>
           </div>
           <div class="n-user-menu-logout">{{$t(dict.localeObj.personalCenter.logout)}}</div>
@@ -113,6 +117,18 @@ export default {
     setFullScreen () {
       const self = this
       utils.fullScreenCtl(!self.isFullScreen)
+    },
+    toClean () {
+      const self = this
+      dict.commonObj.localStorageKey.forEach((item) => {
+        localStorage.removeItem(item)
+      })
+      self.$message.success(
+        self.$t(dict.localeObj.personalCenter.errorTip.cleanSuccess),
+        2
+      ).then(() => {
+        window.location.reload()
+      })
     }
   }
 }

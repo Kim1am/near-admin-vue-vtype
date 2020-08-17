@@ -351,6 +351,7 @@ const fullScreenCtl = tp => {
   }
 }
 const getHotKeyStringList = e => {
+  console.log(e)
   // confirm if combine keyboard
   const ctrlKey = {
     isKey: e.ctrlKey,
