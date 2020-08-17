@@ -50,7 +50,7 @@ export default {
   },
   methods: {
     toPage (page) {
-      const self = TouchList
+      const self = this
       self.$newpage({
         title: page.title,
         component: page.path

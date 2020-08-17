@@ -35,7 +35,7 @@
     <div class="n-logline-table">
       <n-common-table :table-obj="loglineTable" @btnevent="btnEvent">
         <a-table
-          slot-scope="{sizeClass, rowKey, selectColumns, selectData, rowClass}"
+          slot-scope="{sizeClass, rowKey, selectColumns, rowClass}"
           :class="sizeClass"
           :row-key="rowKey"
           slot="com-table"
